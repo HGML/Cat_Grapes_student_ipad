@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="13F34" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="Exercise" representedClassName="Exercise" syncable="YES">
+        <attribute name="uid" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <relationship name="doneByStudents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Student" inverseName="didExercises" inverseEntity="Student" syncable="YES"/>
+        <relationship name="inUnit" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Unit" inverseName="containsExercises" inverseEntity="Unit" syncable="YES"/>
+        <relationship name="testsComponents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="StructureComponent" inverseName="testedInExercise" inverseEntity="StructureComponent" syncable="YES"/>
+        <relationship name="testsWords" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Word" inverseName="testedInExercise" inverseEntity="Word" syncable="YES"/>
+    </entity>
+    <entity name="Parent" representedClassName="Parent" syncable="YES">
+        <attribute name="deviceToken" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="relationship" attributeType="String" syncable="YES"/>
+        <attribute name="uid" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <relationship name="hasStudents" toMany="YES" deletionRule="Nullify" destinationEntity="Student" inverseName="hasParents" inverseEntity="Student" syncable="YES"/>
+    </entity>
+    <entity name="Sentence" representedClassName="Sentence" syncable="YES">
+        <attribute name="chinese" attributeType="String" syncable="YES"/>
+        <attribute name="core" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="distractors" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="english" attributeType="String" syncable="YES"/>
+        <attribute name="equivalents" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="structure" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="uid" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <relationship name="hasMainComponent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="StructureComponent" inverseName="isMainInSentence" inverseEntity="StructureComponent" syncable="YES"/>
+        <relationship name="usesComponents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="StructureComponent" inverseName="inSentence" inverseEntity="StructureComponent" syncable="YES"/>
+        <relationship name="usesWords" toMany="YES" deletionRule="Nullify" destinationEntity="Word" inverseName="usedInSentences" inverseEntity="Word" syncable="YES"/>
+    </entity>
+    <entity name="StructureComponent" representedClassName="StructureComponent" syncable="YES">
+        <attribute name="family" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="reducible" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="uid" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <relationship name="inSentence" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Sentence" inverseName="usesComponents" inverseEntity="Sentence" syncable="YES"/>
+        <relationship name="isMainInSentence" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Sentence" inverseName="hasMainComponent" inverseEntity="Sentence" syncable="YES"/>
+        <relationship name="testedInExercise" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Exercise" inverseName="testsComponents" inverseEntity="Exercise" syncable="YES"/>
+    </entity>
+    <entity name="Student" representedClassName="Student" syncable="YES">
+        <attribute name="curExercise" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="curUnit" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="curVideo" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="grade" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="initialInterval" attributeType="Integer 16" defaultValueString="1" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="password" attributeType="String" valueTransformerName="PasswordTransformer" syncable="YES"/>
+        <attribute name="school" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="username" attributeType="String" syncable="YES"/>
+        <relationship name="didExercises" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Exercise" inverseName="doneByStudents" inverseEntity="Exercise" syncable="YES"/>
+        <relationship name="hasParents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Parent" inverseName="hasStudents" inverseEntity="Parent" syncable="YES"/>
+        <relationship name="learnedUnits" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Unit" inverseName="learnedByStudents" inverseEntity="Unit" syncable="YES"/>
+        <relationship name="watchedVideos" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Video" inverseName="watchedByStudents" inverseEntity="Video" syncable="YES"/>
+    </entity>
+    <entity name="StudentLearnedComponent" representedClassName="StudentLearnedStructure" syncable="YES">
+        <attribute name="componentID" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="dateLearned" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="daysSinceLearned" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="history" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nextTestDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="strength" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="studentUsername" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="testInterval" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+    </entity>
+    <entity name="StudentLearnedWord" representedClassName="StudentLearnedWord" syncable="YES">
+        <attribute name="dateLearned" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="daysSinceLearned" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="history" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nextTestDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="strength" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="studentUsername" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="testInterval" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="wordID" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+    </entity>
+    <entity name="Unit" representedClassName="Unit" syncable="YES">
+        <attribute name="components" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="title" attributeType="String" syncable="YES"/>
+        <attribute name="uid" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <relationship name="containsExercises" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Exercise" inverseName="inUnit" inverseEntity="Exercise" syncable="YES"/>
+        <relationship name="containsVideos" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Video" inverseName="inUnit" inverseEntity="Video" syncable="YES"/>
+        <relationship name="learnedByStudents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Student" inverseName="learnedUnits" inverseEntity="Student" syncable="YES"/>
+    </entity>
+    <entity name="Video" representedClassName="Video" syncable="YES">
+        <attribute name="frameSize" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="length" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="uid" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="youkuID" attributeType="String" syncable="YES"/>
+        <relationship name="inUnit" maxCount="1" deletionRule="Nullify" destinationEntity="Unit" inverseName="containsVideos" inverseEntity="Unit" syncable="YES"/>
+        <relationship name="watchedByStudents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Student" inverseName="watchedVideos" inverseEntity="Student" syncable="YES"/>
+    </entity>
+    <entity name="Word" representedClassName="Word" syncable="YES">
+        <attribute name="chinese" attributeType="String" syncable="YES"/>
+        <attribute name="distractors" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="english" attributeType="String" syncable="YES"/>
+        <attribute name="family" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="partOfSpeech" attributeType="String" syncable="YES"/>
+        <attribute name="uid" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <relationship name="testedInExercise" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Exercise" inverseName="testsWords" inverseEntity="Exercise" syncable="YES"/>
+        <relationship name="usedInSentences" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Sentence" inverseName="usesWords" inverseEntity="Sentence" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Exercise" positionX="135" positionY="99" width="128" height="118"/>
+        <element name="Parent" positionX="-254" positionY="-9" width="128" height="118"/>
+        <element name="Sentence" positionX="324" positionY="-54" width="128" height="193"/>
+        <element name="StructureComponent" positionX="306" positionY="185" width="128" height="148"/>
+        <element name="Student" positionX="-90" positionY="-72" width="128" height="253"/>
+        <element name="StudentLearnedComponent" positionX="133" positionY="243" width="128" height="163"/>
+        <element name="StudentLearnedWord" positionX="-36" positionY="243" width="128" height="165"/>
+        <element name="Unit" positionX="126" positionY="-250" width="128" height="133"/>
+        <element name="Video" positionX="108" positionY="-70" width="128" height="133"/>
+        <element name="Word" positionX="295" positionY="-252" width="128" height="163"/>
+    </elements>
+</model>
