@@ -79,14 +79,14 @@
     NSFileManager *fileManager = [NSFileManager defaultManager];
     // If the expected store doesn't exist, copy the default store.
     // ***
-    if ([fileManager fileExistsAtPath:[storeURL path]]) {
-        if (! [fileManager removeItemAtPath:[storeURL path] error:&error]) {
-            NSLog(@"ERROR: Failed to remove database from %@", storeURL);
-        }
-        else {
-            NSLog(@"Removed database from %@", storeURL);
-        }
-    }
+//    if ([fileManager fileExistsAtPath:[storeURL path]]) {
+//        if (! [fileManager removeItemAtPath:[storeURL path] error:&error]) {
+//            NSLog(@"ERROR: Failed to remove database from %@", storeURL);
+//        }
+//        else {
+//            NSLog(@"Removed database from %@", storeURL);
+//        }
+//    }
     // ***
     if (![fileManager fileExistsAtPath:[storeURL path]]) {
         NSURL *defaultStoreURL = [[NSBundle mainBundle] URLForResource:@"Gifted_Kids" withExtension:@"sqlite"];

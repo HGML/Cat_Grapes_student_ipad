@@ -77,17 +77,21 @@
     self.view.backgroundColor = VIEW_BACKGROUND_COLOR;
     [self.navigationController setNavigationBarHidden:YES];
     
-    self.formFields = [NSArray arrayWithObjects:@"全名", @"邮箱", @"用户名", @"密码", @"年级", nil];
+    self.formFields = [NSArray arrayWithObjects:@"全名", @"邮箱", @"密码", @"年级", nil];
     self.textFields = [NSMutableArray array];
     self.textFieldState = [NSMutableArray arrayWithObjects:
-                           [NSNumber numberWithInt:0], [NSNumber numberWithInt:0], [NSNumber numberWithInt:0], nil];
-    self.filledTextFields = 0;
+                           [NSNumber numberWithInt:0], [NSNumber numberWithInt:0], [NSNumber numberWithInt:0], [NSNumber numberWithInt:1], nil];
+    self.filledTextFields = 1;
     
     self.formTableView.dataSource = self;
     [self.formTableView reloadData];
     
     [self.createButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.createButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
     [self.createButton setEnabled:NO];
 }
 
@@ -110,7 +114,6 @@
     /*
      * Name
      * Email
-     * Username
      * Password
      * Grade
      */
@@ -118,24 +121,23 @@
     for (UITextField* textField in self.textFields) {
         [studentInfo addObject:textField.text];
     }
-    
-    // !!!!!!!
-    // Emma needs to check whether some data feilds are blank here!
-    // !!!!!!!
-    
-    NSLog(@"%@", studentInfo);
-    
-    // Send a POST request to back-end server to create the student user.
-    // !!!This can be encanpsulated later by add another header file in AFNetworking framework package
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    NSLog(@"Got student info: %@", studentInfo);
     
     // Package all the paras in a student field
-    NSDictionary *parameters = @{@"student":@{@"name":studentInfo[0], @"email":studentInfo[1], @"password":studentInfo[3], @"grade":studentInfo[4]}};
-    [manager POST:@CREATE_URL parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    NSDictionary *parameters = @{@"student":@{@"name":studentInfo[0],
+                                              @"email":studentInfo[1],
+                                              @"password":studentInfo[2],
+                                              @"grade":studentInfo[3]}
+                                 };
+    
+    // Send a POST request to back-end server to create the student user.
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager POST:@CREATE_URL
+       parameters:parameters
+          success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"Server response object: %@", responseObject);
         
-        if([responseObject[@"status"]  isEqual: (@"Existed")])
-        {
+        if([responseObject[@"status"]  isEqual: (@"Existed")]) {
             NSLog(@"Server: An account already exists under the email address %@. Please log in instead.", studentInfo[1]);
             NSLog(@"Student not created");
             self.email = studentInfo[1];
@@ -147,13 +149,11 @@
             [emailExistsAlert show];
             return;
         }
-        else if([responseObject[@"status"]  isEqual: (@"Failure")])
-        {
+        else if([responseObject[@"status"]  isEqual: (@"Failure")]) {
             NSLog(@"Server: Unknown Failure of signing up!");
             // !!! Add future re_direction to the user page here.
         }
-        else if([responseObject[@"status"]  isEqual: (@"Created")])
-        {
+        else if([responseObject[@"status"]  isEqual: (@"Created")]) {
             NSLog(@"Server: Created successfully!");
             
             // Save student email to UserDefaults
@@ -164,8 +164,8 @@
             
             // Create student
             Student* student = [Student studentWithEmail:studentInfo[1]
-                                                username:studentInfo[2]
-                                             andPassword:studentInfo[3]
+                                                username:studentInfo[0]
+                                             andPassword:studentInfo[2]
                                   inManagedObjectContext:self.context];
             if (! student) {
                 NSLog(@"Local ERROR: Could not create student");
@@ -177,7 +177,7 @@
                 student.name = name;
             }
             
-            student.grade = [NSNumber numberWithInt:[studentInfo[4] intValue]];
+            student.grade = [NSNumber numberWithInt:[studentInfo[3] intValue]];
             
             [self addLearnedWordsAndComponentsForStudent:student];
             
@@ -192,57 +192,6 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Server: ERROR when performing POST operation: %@", error);
     }];
-    
-    // Check email availability
-    /*
-    NSString* email = studentInfo[1];
-    NSFetchRequest* request_email = [NSFetchRequest fetchRequestWithEntityName:@"Student"];
-    request_email.predicate = [NSPredicate predicateWithFormat:@"email == %@", email];
-    NSError* error = nil;
-    NSArray* match_email = [self.context executeFetchRequest:request_email error:&error];
-    if (! match_email || [match_email count] > 1) {
-        NSLog(@"ERROR: Error when fetching student with email %@.", email);
-        NSLog(@"\tmatch = %@", match_email);
-        NSLog(@"Student not created");
-        return;
-    }
-    else if ([match_email count] == 1) {
-        NSLog(@"An account already exists under the email address %@. Please log in instead.", email);
-        NSLog(@"Student not created");
-        self.email = email;
-        UIAlertView* emailExistsAlert = [[UIAlertView alloc] initWithTitle:@"邮箱已被使用"
-                                                                   message:@"是否要登陆？"
-                                                                  delegate:self
-                                                         cancelButtonTitle:@"取消"
-                                                         otherButtonTitles:@"登陆", nil];
-        [emailExistsAlert show];
-        return;
-    }
-    
-    // Check username availability
-    NSString* username = studentInfo[2];
-    NSFetchRequest* request_username = [NSFetchRequest fetchRequestWithEntityName:@"Student"];
-    request_username.predicate = [NSPredicate predicateWithFormat:@"username == %@", username];
-    NSArray* match_username = [self.context executeFetchRequest:request_username error:&error];
-    if (! match_username || [match_username count] > 1) {
-        NSLog(@"ERROR: Error when fetching student with username %@.", username);
-        NSLog(@"\tmatch = %@", match_username);
-        NSLog(@"Student not created");
-        return;
-    }
-    else if ([match_username count] == 1) {
-        NSLog(@"ERROR: The username %@ has been taken by another user. Please pick another username.", username);
-        UIAlertView* usernameExistsAlert = [[UIAlertView alloc] initWithTitle:@"用户名已被使用"
-                                                                      message:@"请选择其他用户名"
-                                                                     delegate:self
-                                                            cancelButtonTitle:@"好"
-                                                            otherButtonTitles:nil];
-        [usernameExistsAlert show];
-        NSLog(@"Student not created");
-        return;
-    }
-     
-     */
 }
 
 - (void)addLearnedWordsAndComponentsForStudent:(Student*)student
@@ -307,23 +256,18 @@
         [textField setEnabled:YES];
         
         if (indexPath.row == 0) {   // Name
-            textField.placeholder = @"（可选）";
             [textField becomeFirstResponder];
-            textField.text = @"Emma Li";
+//            textField.text = @"Emma Li";
         }
         else if (indexPath.row == 1) {   // Email
             textField.keyboardType = UIKeyboardTypeEmailAddress;
-            textField.text = @"hgliyi@yahoo.com";
+//            textField.text = @"hgliyi@yahoo.com";
         }
-        else if (indexPath.row == 2) {   // Username
-            textField.text = @"EmmaLi";
-            [self.createButton setEnabled:YES];
-        }
-        else if (indexPath.row == 3) {   // Password
+        else if (indexPath.row == 2) {   // Password
             textField.secureTextEntry = YES;
-            textField.text = @"hgml1217";
+//            textField.text = @"hgml1217";
         }
-        else if (indexPath.row == 4) {   // Grade
+        else if (indexPath.row == 3) {   // Grade
             textField.text = @"3";
             [textField setEnabled:NO];   // must use stepper; do not permit direct editting
             
@@ -372,25 +316,25 @@
 - (IBAction)textFieldDidChange:(UITextField*)textField
 {
     size_t tag = textField.tag;
-    if (tag == 0) {   // Ignore full name field (not mandatory)
-        return;
-    }
-    
     NSString* text = textField.text;
-    if ([text isEqualToString:@""] && [self.textFieldState[tag - 1] intValue] != 0) {
-        self.textFieldState[tag - 1] = [NSNumber numberWithInt:0];
+    
+    if ([text isEqualToString:@""] && [self.textFieldState[tag] intValue] != 0) {
+        self.textFieldState[tag] = [NSNumber numberWithInt:0];
         self.filledTextFields = self.filledTextFields - 1;
         
         if (self.createButton.enabled) {
             [self.createButton setEnabled:NO];
         }
     }
-    else if (! [text isEqualToString:@""] && [self.textFieldState[tag - 1] intValue] == 0) {
-        self.textFieldState[tag - 1] = [NSNumber numberWithInt:1];
+    else if (! [text isEqualToString:@""] && [self.textFieldState[tag] intValue] == 0) {
+        self.textFieldState[tag] = [NSNumber numberWithInt:1];
         self.filledTextFields = self.filledTextFields + 1;
         
-        if (self.filledTextFields == 3) {
+        if (self.filledTextFields == 4) {
             [self.createButton setEnabled:YES];
+        }
+        else if (self.createButton.enabled) {
+            [self.createButton setEnabled:NO];
         }
     }
 }

@@ -70,7 +70,7 @@
     self.view.backgroundColor = VIEW_BACKGROUND_COLOR;
     [self.navigationController setNavigationBarHidden:YES];
     
-    self.formFields = [NSArray arrayWithObjects:@"用户名", @"密码", nil];
+    self.formFields = [NSArray arrayWithObjects:@"邮箱", @"密码", nil];
     self.textFields = [NSMutableArray array];
     self.textFieldState = [NSMutableArray arrayWithObjects:[NSNumber numberWithInt:0], [NSNumber numberWithInt:0], nil];
     self.filledTextFields = 0;
@@ -80,6 +80,10 @@
     
     [self.logInButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.logInButton setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
     [self.logInButton setEnabled:NO];
 }
 
@@ -103,12 +107,13 @@
         [studentInfo addObject:textField.text];
     }
     
-    // Send a POST request to back-end server to create the student user.
-    // !!!This can be encanpsulated later by add another header file in AFNetworking framework package
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    
     // Package all the paras in a student field
-    NSDictionary *parameters = @{@"student":@{@"email":studentInfo[0], @"password":studentInfo[1]}};
+    NSDictionary *parameters = @{@"student":@{@"email":studentInfo[0],
+                                              @"password":studentInfo[1]}
+                                 };
+    
+    // Send a POST request to back-end server to create the student user.
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:@LOGIN_URL parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"Server response object: %@", responseObject);
         
@@ -116,7 +121,7 @@
         {
             NSLog(@"Server: No student account exists with email %@ and password %@.", studentInfo[0], studentInfo[1]);
             UIAlertView* noAccountAlert = [[UIAlertView alloc] initWithTitle:@"无法登陆"
-                                                                     message:@"用户名或密码错误"
+                                                                     message:@"邮箱或密码错误"
                                                                     delegate:self
                                                            cancelButtonTitle:@"好"
                                                            otherButtonTitles:nil];
@@ -139,36 +144,6 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
     }];
-    
-    /*
-    NSString* email = studentInfo[0];
-    NSString* password = studentInfo[1];
-    
-    NSFetchRequest* request_logIn = [NSFetchRequest fetchRequestWithEntityName:@"Student"];
-    request_logIn.predicate = [NSPredicate predicateWithFormat:@"email == %@ && password == %@", email, password];
-    NSError* error = nil;
-    NSArray* match = [self.context executeFetchRequest:request_logIn error:&error];
-    if (! match || [match count] > 1) {
-        NSLog(@"ERROR: Error when fetching student with email %@ and password %@.", email, password);
-        NSLog(@"\tmatch = %@", match);
-        NSLog(@"Student not found");
-        return;
-    }
-    else if ([match count] == 0) {
-        NSLog(@"ERROR: No student account exists with email %@ and password %@.", email, password);
-        NSLog(@"Student not found");
-        UIAlertView* noAccountAlert = [[UIAlertView alloc] initWithTitle:@"无法登陆" message:@"用户名或密码错误" delegate:self cancelButtonTitle:@"好" otherButtonTitles:nil];
-        [noAccountAlert show];
-        return;
-    }
-    
-    Student* student = [match lastObject];
-    NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
-    [userDefaults setObject:student.username forKey:@"Username"];
-    [userDefaults synchronize];
-    NSLog(@"Logged In");
-    [self.navigationController popToRootViewControllerAnimated:NO];
-     */
 }
 
 
@@ -207,7 +182,7 @@
         forControlEvents:UIControlEventEditingChanged];
     
     if (indexPath.row == 0) {   // Email
-        textField.placeholder = @"（或电子邮箱）";
+//        textField.placeholder = @"（或电子邮箱）";
         textField.keyboardType = UIKeyboardTypeEmailAddress;
         
         if (self.email && ! [self.email isEqualToString:@""]) {
@@ -266,6 +241,9 @@
         
         if (self.filledTextFields == 2) {
             [self.logInButton setEnabled:YES];
+        }
+        else if (self.logInButton.enabled) {
+            [self.logInButton setEnabled:NO];
         }
     }
 }

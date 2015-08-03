@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>5E243A89-D509-44AE-87CA-35ADEC88F411</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Gifted Kids</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>F265426DB0254B0C1072EB4846BC61BE36A8A9CD</key>
+		<string>https://github.com/HGML/Cat_Grapes_student_ipad.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Gifted Kids.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>F265426DB0254B0C1072EB4846BC61BE36A8A9CD</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/HGML/Cat_Grapes_student_ipad.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>F265426DB0254B0C1072EB4846BC61BE36A8A9CD</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>F265426DB0254B0C1072EB4846BC61BE36A8A9CD</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Cat_Grapes_student_ipad</string>
+		</dict>
+	</array>
+</dict>
+</plist>
