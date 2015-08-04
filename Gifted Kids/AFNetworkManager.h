@@ -17,7 +17,7 @@
 
 #define LOGIN_URL "http://localhost:3000/sessions/create"
 
-#define LOGOUT_URL "http://localhost:3000/students/"   // "http://localhost:3000/students/'student_id'"
+#define LOGOUT_URL "http://localhost:3000/sessions/destroy"
 
 @end
 	
