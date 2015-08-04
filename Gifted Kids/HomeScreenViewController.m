@@ -191,7 +191,7 @@
          success:^(AFHTTPRequestOperation* operation, id responseObject) {
              NSLog(@"Logged out of user account %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"StudentEmail"]);
              [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"StudentEmail"];
-             [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"StudentID"];
+//             [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"StudentID"];
              [[NSUserDefaults standardUserDefaults] synchronize];
              [self performSegueWithIdentifier:@"Sign Up Log In" sender:self];
          }

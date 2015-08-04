@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "AFNetworking.h"
 
+
 @interface AFNetworkManager : NSObject
 
 // Sign Up, Log In, Log Out
@@ -18,6 +19,11 @@
 #define LOGIN_URL "http://localhost:3000/sessions/create"
 
 #define LOGOUT_URL "http://localhost:3000/sessions/destroy"
+
+
+// Fetch StudentCurrentRecord
+
+#define CREATE_STUDENT_RECORD_URL "http://localhost:3000/student_current_records"
 
 @end
 	

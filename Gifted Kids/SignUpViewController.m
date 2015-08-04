@@ -159,9 +159,12 @@
             // Save student email and student id to UserDefaults
             NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
             [userDefaults setObject:studentObject[@"email"] forKey:@"StudentEmail"];
-            [userDefaults setObject:studentObject[@"id"] forKey:@"StudentID"];
+//            [userDefaults setObject:studentObject[@"id"] forKey:@"StudentID"];
             [userDefaults synchronize];
             NSLog(@"Local: Logged In");
+            
+            // Request server to create student record
+            [self requestCreateStudentRecord];
             
             // Create student
             Student* student = [Student studentWithEmail:studentInfo[1]
@@ -193,6 +196,18 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Server: ERROR when performing POST operation: %@", error);
     }];
+}
+
+- (void)requestCreateStudentRecord
+{
+    AFHTTPRequestOperationManager* manager = [AFHTTPRequestOperationManager manager];
+    [manager POST:@CREATE_STUDENT_RECORD_URL parameters:nil
+          success:^(AFHTTPRequestOperation* operation, id responseObject) {
+              NSLog(@"SERVER Success: created student record, response %@", responseObject);
+          }
+          failure:^(AFHTTPRequestOperation* operation, NSError* error) {
+              NSLog(@"SERVER Failed to create student record. Error: %@", error);
+          }];
 }
 
 - (void)addLearnedWordsAndComponentsForStudent:(Student*)student
