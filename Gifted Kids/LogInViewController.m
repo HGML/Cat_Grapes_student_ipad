@@ -11,12 +11,10 @@
 #import "Student.h"
 
 // Library to send request to server
-#import "AFNetworking.h"
+#import "AFNetworkManager.h"
 
 #define VIEW_BACKGROUND_COLOR [UIColor colorWithRed:19.849724472/255 green:160.192457736/255 blue:238.374204934/255 alpha:1.0]
 
-// !!! This can be further included in another file
-#define LOGIN_URL "http://localhost:3000/sessions/create"
 
 @interface LogInViewController ()
 
@@ -134,7 +132,7 @@
             
             // Save student email to UserDefaults
             NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
-            [userDefaults setObject:studentInfo[0] forKey:@"UserEmail"];
+            [userDefaults setObject:studentInfo[0] forKey:@"StudentEmail"];
             [userDefaults synchronize];
             NSLog(@"Local: Logged In");
             

@@ -76,6 +76,7 @@
 		313839F1197BED4700047995 /* Exercise.m in Sources */ = {isa = PBXBuildFile; fileRef = 313839F0197BED4700047995 /* Exercise.m */; };
 		314636E7194F003700380A12 /* DatabaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 314636E6194F003700380A12 /* DatabaseViewController.m */; };
 		3153176F19936B420030BF1A /* StructureComponent.m in Sources */ = {isa = PBXBuildFile; fileRef = 3153176E19936B420030BF1A /* StructureComponent.m */; };
+		317B58C41B708FA000DF0491 /* AFNetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 317B58C31B708FA000DF0491 /* AFNetworkManager.m */; };
 		4DB3C6411A5A6DDE0086B098 /* Gifted_Kids.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 4DB3C6401A5A6DDE0086B098 /* Gifted_Kids.sqlite */; };
 		4DC0603D1B6F41FE001B6466 /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC0602B1B6F41FE001B6466 /* AFHTTPRequestOperation.m */; };
 		4DC0603E1B6F41FE001B6466 /* AFHTTPRequestOperationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC0602D1B6F41FE001B6466 /* AFHTTPRequestOperationManager.m */; };
@@ -212,6 +213,8 @@
 		314636E6194F003700380A12 /* DatabaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DatabaseViewController.m; sourceTree = "<group>"; };
 		3153176D19936B420030BF1A /* StructureComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureComponent.h; sourceTree = "<group>"; };
 		3153176E19936B420030BF1A /* StructureComponent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StructureComponent.m; sourceTree = "<group>"; };
+		317B58C21B708FA000DF0491 /* AFNetworkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFNetworkManager.h; sourceTree = "<group>"; };
+		317B58C31B708FA000DF0491 /* AFNetworkManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFNetworkManager.m; sourceTree = "<group>"; };
 		4D91FDDA1A985B330014615D /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		4D91FDDC1A985B3A0014615D /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		4D91FDDE1A985B460014615D /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
@@ -443,6 +446,8 @@
 				15C0F6C4192469E300169AF1 /* AppDelegate.m */,
 				1508C3661931AC1000C91931 /* DateManager.h */,
 				1508C3671931AC1000C91931 /* DateManager.m */,
+				317B58C21B708FA000DF0491 /* AFNetworkManager.h */,
+				317B58C31B708FA000DF0491 /* AFNetworkManager.m */,
 				15C0F6C6192469E300169AF1 /* Main.storyboard */,
 				152C55A3192DDD0600D43D3A /* Sign Up Log In */,
 				152C55A0192DDCC600D43D3A /* Home Screen */,
@@ -697,6 +702,7 @@
 				152C559F192DD5DC00D43D3A /* SignUpLogInViewController.m in Sources */,
 				4DC0603D1B6F41FE001B6466 /* AFHTTPRequestOperation.m in Sources */,
 				15C0F74F19250A0B00169AF1 /* VideoPlayerViewController.m in Sources */,
+				317B58C41B708FA000DF0491 /* AFNetworkManager.m in Sources */,
 				152D45DF1928BB4E00D57033 /* TypeTranslationView.m in Sources */,
 				15C0F6EF19247F0500169AF1 /* UnitCollectionViewCell.m in Sources */,
 				313839DC197BA0D400047995 /* Video.m in Sources */,

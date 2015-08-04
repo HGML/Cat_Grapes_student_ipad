@@ -24,6 +24,8 @@
 #import "VideoPlayerViewController.h"
 #import "ExerciseViewController.h"
 
+#import "AFNetworkManager.h"
+
 
 @interface HomeScreenViewController ()
 
@@ -118,7 +120,7 @@
 
 - (void)getUser
 {
-    NSString* email = [[NSUserDefaults standardUserDefaults] objectForKey:@"UserEmail"];
+    NSString* email = [[NSUserDefaults standardUserDefaults] objectForKey:@"StudentEmail"];
     if (! email) {
         [self performSegueWithIdentifier:@"Sign Up Log In" sender:self];
     }
@@ -188,6 +190,20 @@
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"UserEmail"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     [self performSegueWithIdentifier:@"Sign Up Log In" sender:self];
+    
+    AFHTTPRequestOperationManager* manager = [AFHTTPRequestOperationManager manager];
+    NSString* logout_url = [NSString stringWithFormat:@"%@%@",
+                            @LOGOUT_URL, [[NSUserDefaults standardUserDefaults] objectForKey:@"StudentID"]];
+    [manager DELETE:logout_url parameters:nil
+            success:^(AFHTTPRequestOperation* operation, id responseObject) {
+                NSLog(@"Logged out of user account %@", [[NSUserDefaults standardUserDefaults] objectForKey:@"UserEmail"]);
+                [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"UserEmail"];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                [self performSegueWithIdentifier:@"Sign Up Log In" sender:self];
+            }
+            failure:^(AFHTTPRequestOperation* operation, NSError* error) {
+                NSLog(@"SERVER: Failed to log out, error: %@", error);
+            }];
 }
 
 - (void)didReceiveMemoryWarning

@@ -14,12 +14,9 @@
 #import "DateManager.h"
 
 // Library to send request to server
-#import "AFNetworking.h"
+#import "AFNetworkManager.h"
 
 #define VIEW_BACKGROUND_COLOR [UIColor colorWithRed:19.849724472/255 green:160.192457736/255 blue:238.374204934/255 alpha:1.0]
-
-// !!! This can be further included in another file
-#define CREATE_URL "http://localhost:3000/students"
 
 
 @interface SignUpViewController () <UITableViewDataSource, UITextFieldDelegate>
@@ -132,7 +129,7 @@
     
     // Send a POST request to back-end server to create the student user.
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager POST:@CREATE_URL
+    [manager POST:@CREATE_STUDENT_URL
        parameters:parameters
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"Server response object: %@", responseObject);
@@ -156,9 +153,13 @@
         else if([responseObject[@"status"]  isEqual: (@"Created")]) {
             NSLog(@"Server: Created successfully!");
             
-            // Save student email to UserDefaults
+            id studentObject = responseObject[@"student"];
+            NSLog(@"Student: %@", studentObject[@"id"]);
+            
+            // Save student email and student id to UserDefaults
             NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
-            [userDefaults setObject:studentInfo[1] forKey:@"UserEmail"];
+            [userDefaults setObject:studentObject[@"email"] forKey:@"StudentEmail"];
+            [userDefaults setObject:studentObject[@"id"] forKey:@"StudentID"];
             [userDefaults synchronize];
             NSLog(@"Local: Logged In");
             
