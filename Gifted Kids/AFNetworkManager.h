@@ -21,9 +21,22 @@
 #define LOGOUT_URL "http://localhost:3000/sessions/destroy"
 
 
-// Fetch StudentCurrentRecord
+// Get current Student Records
 
-#define CREATE_STUDENT_RECORD_URL "http://localhost:3000/student_current_records"
+#define GET_STUDENT_RECORDS_URL ""   // !!!
+
+
+// Get updated StudentLearnedWords and StudentLearnedComponents
+
+#define GET_STUDENT_LEARNED_WORDS_URL ""
+
+#define GET_STUDENT_LEARNED_COMPONENTS_URL ""
+
+
+// Get resources (Words, Components, Sentences) for Case
+
+#define GET_CASE_RESOURCES_URL ""
+
 
 @end
 	

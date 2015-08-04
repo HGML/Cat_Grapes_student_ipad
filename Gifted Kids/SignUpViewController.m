@@ -154,17 +154,13 @@
             NSLog(@"Server: Created successfully!");
             
             id studentObject = responseObject[@"student"];
-            NSLog(@"Student: %@", studentObject[@"id"]);
+            NSLog(@"Student id: %@", studentObject[@"id"]);
             
             // Save student email and student id to UserDefaults
             NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
             [userDefaults setObject:studentObject[@"email"] forKey:@"StudentEmail"];
-//            [userDefaults setObject:studentObject[@"id"] forKey:@"StudentID"];
             [userDefaults synchronize];
             NSLog(@"Local: Logged In");
-            
-//            // Request server to create student record
-//            [self requestCreateStudentRecord];
             
             // Create student
             Student* student = [Student studentWithEmail:studentInfo[1]
@@ -183,7 +179,7 @@
             
             student.grade = [NSNumber numberWithInt:[studentInfo[3] intValue]];
             
-            [self addLearnedWordsAndComponentsForStudent:student];
+//            [self addLearnedWordsAndComponentsForStudent:student];
             
             NSError* error = nil;
             [self.context save:&error];
@@ -198,42 +194,30 @@
     }];
 }
 
-//- (void)requestCreateStudentRecord
+//- (void)addLearnedWordsAndComponentsForStudent:(Student*)student
 //{
-//    AFHTTPRequestOperationManager* manager = [AFHTTPRequestOperationManager manager];
-//    [manager POST:@CREATE_STUDENT_RECORD_URL parameters:nil
-//          success:^(AFHTTPRequestOperation* operation, id responseObject) {
-//              NSLog(@"SERVER Success: created student record, response %@", responseObject);
-//          }
-//          failure:^(AFHTTPRequestOperation* operation, NSError* error) {
-//              NSLog(@"SERVER Failed to create student record. Error: %@", error);
-//          }];
+//    NSInteger grade = student.grade.integerValue;
+//    
+//    // Add StudentLearnedWord
+//    NSError* error = nil;
+//    NSFetchRequest* request_words = [NSFetchRequest fetchRequestWithEntityName:@"Word"];
+//    request_words.predicate = [NSPredicate predicateWithFormat:@"%ld <= uid && uid < %ld", 10000000, (1100 + grade) * 10000];
+//    request_words.propertiesToFetch = [NSArray arrayWithObject:@"uid"];
+//    request_words.sortDescriptors = [NSArray arrayWithObject:
+//                                     [NSSortDescriptor sortDescriptorWithKey:@"uid" ascending:YES]];
+//    NSArray* match_words = [self.context executeFetchRequest:request_words error:&error];
+//    
+//    for (Word* word in match_words) {
+//        StudentLearnedWord* slw = [StudentLearnedWord student:student.username
+//                                                  learnedWord:word.uid
+//                                                       onDate:[DateManager dateDays:-1 afterDate:[DateManager today]]
+//                                       inManagedObjectContext:self.context];
+//        slw.strength = [NSNumber numberWithInt:100];
+//    }
+//    
+//    
+//    // Add StudentLearnedComponent
 //}
-
-- (void)addLearnedWordsAndComponentsForStudent:(Student*)student
-{
-    NSInteger grade = student.grade.integerValue;
-    
-    // Add StudentLearnedWord
-    NSError* error = nil;
-    NSFetchRequest* request_words = [NSFetchRequest fetchRequestWithEntityName:@"Word"];
-    request_words.predicate = [NSPredicate predicateWithFormat:@"%ld <= uid && uid < %ld", 10000000, (1100 + grade) * 10000];
-    request_words.propertiesToFetch = [NSArray arrayWithObject:@"uid"];
-    request_words.sortDescriptors = [NSArray arrayWithObject:
-                                     [NSSortDescriptor sortDescriptorWithKey:@"uid" ascending:YES]];
-    NSArray* match_words = [self.context executeFetchRequest:request_words error:&error];
-    
-    for (Word* word in match_words) {
-        StudentLearnedWord* slw = [StudentLearnedWord student:student.username
-                                                  learnedWord:word.uid
-                                                       onDate:[DateManager dateDays:-1 afterDate:[DateManager today]]
-                                       inManagedObjectContext:self.context];
-        slw.strength = [NSNumber numberWithInt:100];
-    }
-    
-    
-    // Add StudentLearnedComponent
-}
 
 
 #pragma mark - Table View Data Source

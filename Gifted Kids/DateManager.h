@@ -14,6 +14,8 @@
 
 + (NSDate*)today;
 
++ (NSDate*)now;
+
 + (NSString*)nowString;
 
 + (NSDate*)dateDays:(int)days afterDate:(NSDate*)date;

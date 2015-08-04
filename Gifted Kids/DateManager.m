@@ -26,6 +26,15 @@
     return [formatter dateFromString:todayString];
 }
 
++ (NSDate*)now
+{
+    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    [formatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"HKT"]];
+    NSString* nowString = [formatter stringFromDate:[NSDate date]];
+    return [formatter dateFromString:nowString];
+}
+
 + (NSString*)nowString
 {
     NSDateFormatter* formatter = [[NSDateFormatter alloc] init];

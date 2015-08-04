@@ -24,6 +24,7 @@
 #import "VideoPlayerViewController.h"
 #import "ExerciseViewController.h"
 
+#import "DateManager.h"
 #import "AFNetworkManager.h"
 
 
@@ -68,26 +69,26 @@
     AppDelegate* appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     self.context = appDelegate.managedObjectContext;
     
-    [self fetchAllStudents];
-    
     self.navigationItem.title = @"课程";
     self.collectionView.backgroundColor = [UIColor whiteColor];
+    
+//    [self fetchAllStudents];
 }
 
-- (void)fetchAllStudents
-{
-    dispatch_async(dispatch_get_main_queue(), ^(void){
-        NSFetchRequest* request_students = [NSFetchRequest fetchRequestWithEntityName:@"Student"];
-        NSError* error = nil;
-        NSArray* match_students = [self.context executeFetchRequest:request_students error:&error];
-        if (! match_students) {
-            NSLog(@"ERROR: Error when fetching students");
-        }
-        else {
-            NSLog(@"Students: %d", (int)match_students.count);
-        }
-    });
-}
+//- (void)fetchAllStudents
+//{
+//    dispatch_async(dispatch_get_main_queue(), ^(void){
+//        NSFetchRequest* request_students = [NSFetchRequest fetchRequestWithEntityName:@"Student"];
+//        NSError* error = nil;
+//        NSArray* match_students = [self.context executeFetchRequest:request_students error:&error];
+//        if (! match_students) {
+//            NSLog(@"ERROR: Error when fetching students");
+//        }
+//        else {
+//            NSLog(@"Students: %d", (int)match_students.count);
+//        }
+//    });
+//}
 
 
 - (void)viewDidAppear:(BOOL)animated
@@ -96,26 +97,27 @@
     
     [self.navigationController setNavigationBarHidden:NO];
     
-    NSError* error = nil;
-    NSFetchRequest* request_words = [NSFetchRequest fetchRequestWithEntityName:@"Word"];
-    request_words.sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"uid" ascending:YES]];
-    NSArray* match_words = [self.context executeFetchRequest:request_words error:&error];
-    NSLog(@"%ld words in database", match_words.count);
-    
-    NSFetchRequest* request_components = [NSFetchRequest fetchRequestWithEntityName:@"StructureComponent"];
-    request_components.sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"uid" ascending:YES]];
-    NSArray* match_components = [self.context executeFetchRequest:request_components error:&error];
-    NSLog(@"%ld components in database", match_components.count);
-    
-    NSFetchRequest* request_sentences = [NSFetchRequest fetchRequestWithEntityName:@"Sentence"];
-    request_sentences.sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"uid" ascending:YES]];
-    NSArray* match_sentences = [self.context executeFetchRequest:request_sentences error:&error];
-    NSLog(@"%ld sentences in database", match_sentences.count);
+//    NSError* error = nil;
+//    NSFetchRequest* request_words = [NSFetchRequest fetchRequestWithEntityName:@"Word"];
+//    request_words.sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"uid" ascending:YES]];
+//    NSArray* match_words = [self.context executeFetchRequest:request_words error:&error];
+//    NSLog(@"%ld words in database", match_words.count);
+//    
+//    NSFetchRequest* request_components = [NSFetchRequest fetchRequestWithEntityName:@"StructureComponent"];
+//    request_components.sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"uid" ascending:YES]];
+//    NSArray* match_components = [self.context executeFetchRequest:request_components error:&error];
+//    NSLog(@"%ld components in database", match_components.count);
+//    
+//    NSFetchRequest* request_sentences = [NSFetchRequest fetchRequestWithEntityName:@"Sentence"];
+//    request_sentences.sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"uid" ascending:YES]];
+//    NSArray* match_sentences = [self.context executeFetchRequest:request_sentences error:&error];
+//    NSLog(@"%ld sentences in database", match_sentences.count);
     
     [self getUser];
-    if (self.student && ! self.units) {
-        [self setLearnedUnits];
-    }
+    
+//    if (self.student && ! self.units) {
+//        [self setLearnedUnits];
+//    }
 }
 
 - (void)getUser
@@ -125,64 +127,114 @@
         [self performSegueWithIdentifier:@"Sign Up Log In" sender:self];
     }
     else {
-        NSFetchRequest* request = [NSFetchRequest fetchRequestWithEntityName:@"Student"];
-        request.predicate = [NSPredicate predicateWithFormat:@"email == %@", email];
-        NSError* error = nil;
-        NSArray* match = [self.context executeFetchRequest:request error:&error];
-        if (! match || [match count] > 1) {
-            NSLog(@"ERROR: Error when fetching students");
-        }
-        else if ([match count] == 0) {
-            NSLog(@"ERROR: No user exists with email %@", email);
-            NSLog(@"Please log in or sign up.");
-            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"UserEmail"];
-            [self performSegueWithIdentifier:@"Sign Up Log In" sender:self];
-        }
-        else {
-            self.student = [match lastObject];
-            NSLog(@"Logged in for student %@", self.student.username);
-            
-            [self getUnits];
-        }
+//        NSFetchRequest* request = [NSFetchRequest fetchRequestWithEntityName:@"Student"];
+//        request.predicate = [NSPredicate predicateWithFormat:@"email == %@", email];
+//        NSError* error = nil;
+//        NSArray* match = [self.context executeFetchRequest:request error:&error];
+//        if (! match || [match count] > 1) {
+//            NSLog(@"ERROR: Error when fetching students");
+//        }
+//        else if ([match count] == 0) {
+//            NSLog(@"ERROR: No user exists with email %@", email);
+//            NSLog(@"Please log in or sign up.");
+//            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"UserEmail"];
+//            [self performSegueWithIdentifier:@"Sign Up Log In" sender:self];
+//        }
+//        else {
+//            self.student = [match lastObject];
+//            NSLog(@"Logged in for student %@", self.student.username);
+//            
+//            [self getUnits];
+//        }
+        
+        [self getLatestDataFromServer];
     }
 }
 
-- (void)getUnits
+- (void)getLatestDataFromServer
 {
-    if (! self.student) {
-        NSLog(@"No student");
-        return;
-    }
+    AFHTTPRequestOperationManager* manager = [AFHTTPRequestOperationManager manager];
+    NSDate* lastUpdateDate = [[NSUserDefaults standardUserDefaults] objectForKey:@"LastUpdateDate"];
+    
+    // Request current Student Records
+    [manager GET:@GET_STUDENT_RECORDS_URL parameters:nil
+         success:^(AFHTTPRequestOperation* operation, id responseObject) {
+             NSLog(@"SERVER Success: got current Student Records");
+         }
+         failure:^(AFHTTPRequestOperation* operation, NSError* error) {
+             NSLog(@"SERVER Failed to get current Student Records; Error: %@", error);
+         }];
+    
+    // Request resources (Words, Components, and Sentences) for current case
+    NSDictionary *caseInfo = @{@"caseInfo":@{@"book_id":@0,
+                                             @"unit_number":@1,
+                                             @"case_number":@1}
+                               };
+    [manager GET:@GET_CASE_RESOURCES_URL parameters:caseInfo
+         success:^(AFHTTPRequestOperation* operation, id responseObject) {
+             NSLog(@"SERVER Success: got resources for current case");
+         }
+         failure:^(AFHTTPRequestOperation* operation, NSError* error) {
+             NSLog(@"SERVER Failed to get resources for current case; Error: %@", error);
+         }];
+    
+    // Request updated StudentLearnedWords and StudentLearnedComponents
+    [manager GET:@GET_STUDENT_LEARNED_WORDS_URL parameters:lastUpdateDate
+         success:^(AFHTTPRequestOperation* operation, id responseObject) {
+             NSLog(@"SERVER Success: got updated StudentLearnedWords");
+         }
+         failure:^(AFHTTPRequestOperation* operation, NSError* error) {
+             NSLog(@"SERVER Failed to get updated StudentLearnedWords; Error: %@", error);
+         }];
+    [manager GET:@GET_STUDENT_LEARNED_COMPONENTS_URL parameters:lastUpdateDate
+         success:^(AFHTTPRequestOperation* operation, id responseObject) {
+             NSLog(@"SERVER Success: got updated StudentLearnedComponents");
+         }
+         failure:^(AFHTTPRequestOperation* operation, NSError* error) {
+             NSLog(@"SERVER Failed to get current StudentLearnedComponents; Error: %@", error);
+         }];
     
     
-    if (! self.student.learnedUnits || ! self.student.learnedUnits.count) {
-        NSLog(@"No units learned by student. Adding all units...");
-        [self setLearnedUnits];
-    }
-    
-    self.units = [self.student.learnedUnits sortedArrayUsingDescriptors:
-                  [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"uid" ascending:YES]]];
-    
-    if (! self.units.count) {
-        NSLog(@"ERROR: No units available");
-    }
-    else {
-        NSLog(@"Student has learned %ld units", self.units.count);
-    }
+    // Update LastGetDate
+    [[NSUserDefaults standardUserDefaults] setObject:[DateManager now] forKey:@"LastGetDate"];
 }
 
-- (void)setLearnedUnits
-{
-    NSFetchRequest* request_units = [NSFetchRequest fetchRequestWithEntityName:@"Unit"];
-    NSError* error = nil;
-    NSArray* match_units = [self.context executeFetchRequest:request_units error:&error];
-    if (! match_units || ! match_units.count) {
-        NSLog(@"ERROR: No units available");
-    }
-    else {
-        [self.student addLearnedUnits:[NSSet setWithArray:match_units]];
-    }
-}
+//- (void)getUnits
+//{
+//    if (! self.student) {
+//        NSLog(@"No student");
+//        return;
+//    }
+//    
+//    
+//    if (! self.student.learnedUnits || ! self.student.learnedUnits.count) {
+//        NSLog(@"No units learned by student. Adding all units...");
+//        [self setLearnedUnits];
+//    }
+//    
+//    self.units = [self.student.learnedUnits sortedArrayUsingDescriptors:
+//                  [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"uid" ascending:YES]]];
+//    
+//    if (! self.units.count) {
+//        NSLog(@"ERROR: No units available");
+//    }
+//    else {
+//        NSLog(@"Student has learned %ld units", self.units.count);
+//    }
+//}
+//
+//- (void)setLearnedUnits
+//{
+//    NSFetchRequest* request_units = [NSFetchRequest fetchRequestWithEntityName:@"Unit"];
+//    NSError* error = nil;
+//    NSArray* match_units = [self.context executeFetchRequest:request_units error:&error];
+//    if (! match_units || ! match_units.count) {
+//        NSLog(@"ERROR: No units available");
+//    }
+//    else {
+//        [self.student addLearnedUnits:[NSSet setWithArray:match_units]];
+//    }
+//}
 
 - (IBAction)logOutPressed:(id)sender
 {
