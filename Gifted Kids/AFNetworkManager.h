@@ -38,5 +38,16 @@
 #define GET_CASE_RESOURCES_URL "http://localhost:3000/cases"
 
 
+// Send updated StudentLearnedWords and StudentLearnedComponents
+
+#define ADD_LEARNED_WORDS_URL ""
+
+#define UPDATE_LEARNED_WORDS_URL ""
+
+#define ADD_LEARNED_COMPONENTS_URL ""
+
+#define UPDATE_LEARNED_COMPONENTS_URL ""
+
+
 @end
 	

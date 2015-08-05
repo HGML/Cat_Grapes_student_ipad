@@ -27,6 +27,9 @@
 #import "DateManager.h"
 #import "AFNetworkManager.h"
 
+#import "StudentLearnedWord.h"
+#import "StudentLearnedComponent.h"
+
 
 @interface HomeScreenViewController ()
 
@@ -245,6 +248,87 @@
     
     // Update LastGetDate
     [[NSUserDefaults standardUserDefaults] setObject:[DateManager now] forKey:@"LastGetDate"];
+    
+    // Update records to server (TEST PURPOSES ONLY!)
+    [self writeTestRecordsToServer];
+}
+
+- (void)writeTestRecordsToServer
+{
+    [self addStudentLearnedWordsToServer];
+    [self updateStudentLearnedWordsToServer];
+}
+
+- (void)addStudentLearnedWordsToServer
+{
+    // Package all the paras in a learnedWords field
+    NSDictionary* slw1 = @{@"student_id":@1,
+                           @"word_id":@1,
+                           @"current_strength":@100,
+                           @"strength_history":@"100",
+                           @"test_interval":@2,
+                           @"next_test_date":[DateManager dateDays:2 afterDate:[DateManager today]]
+                           };
+    NSDictionary* slw2 = @{@"student_id":@1,
+                           @"word_id":@2,
+                           @"current_strength":@0,
+                           @"strength_history":@"0",
+                           @"test_interval":@1,
+                           @"next_test_date":[DateManager dateDays:1 afterDate:[DateManager today]]
+                           };
+    NSDictionary* slw3 = @{@"student_id":@1,
+                           @"word_id":@10,
+                           @"current_strength":@0,
+                           @"strength_history":@"0",
+                           @"test_interval":@1,
+                           @"next_test_date":[DateManager dateDays:1 afterDate:[DateManager today]]
+                           };
+    NSDictionary *parameters = @{@"learnedWords":@{@1:slw1,
+                                                   @2:slw2,
+                                                   @3:slw3}
+                                 };
+    
+    // Send a POST request to back-end server to add new StudentLearnedWords
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager POST:@ADD_LEARNED_WORDS_URL
+       parameters:parameters
+          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+              NSLog(@"SERVER Success: added new learnedWords");
+          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+              NSLog(@"SERVER Failed to add new learnedWords: %@", error);
+          }];
+}
+
+- (void)updateStudentLearnedWordsToServer
+{
+    // Package all the paras in a learnedWords field
+    NSDictionary* slw1 = @{@"student_id":@1,
+                           @"word_id":@5,
+                           @"current_strength":@0,
+                           @"strength_history":@"0",
+                           @"test_interval":@1,
+                           @"next_test_date":[DateManager dateDays:1 afterDate:[DateManager today]]
+                           };
+    NSDictionary* slw2 = @{@"student_id":@1,
+                           @"word_id":@7,
+                           @"current_strength":@0,
+                           @"strength_history":@"0",
+                           @"test_interval":@1,
+                           @"next_test_date":[DateManager dateDays:1 afterDate:[DateManager today]]
+                           };
+    NSDictionary *parameters = @{@"learnedWords":@{@1:slw1,
+                                                   @2:slw2}
+                                 };
+    
+    // Send a POST request to back-end server to update StudentLearnedWords
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager POST:@UPDATE_LEARNED_WORDS_URL
+       parameters:parameters
+          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+              NSLog(@"SERVER Success: updated learnedWords");
+          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+              NSLog(@"SERVER Failed to update learnedWords: %@", error);
+          }];
 }
 
 //- (void)getUnits
