@@ -202,23 +202,28 @@
     // Request current Student Records
     [manager GET:@GET_STUDENT_RECORDS_URL parameters:nil
          success:^(AFHTTPRequestOperation* operation, id responseObject) {
-             NSLog(@"SERVER Success: got current Student Records %@", responseObject);
+             NSLog(@"SERVER Success: got current Student Records");
+             
+             id studentRecord = responseObject[@"current_record"];
+             NSNumber* bookID = studentRecord[@"book_id"];
+             NSNumber* unitID = studentRecord[@"unit_id"];
+             NSNumber* caseID = studentRecord[@"case_id"];
+             
+             // Request resources (Words, Components, and Sentences) for current case
+             NSDictionary *caseInfo = @{@"caseInfo":@{@"book_id":bookID,
+                                                      @"unit_number":unitID,
+                                                      @"case_number":caseID}
+                                        };
+             [manager GET:@GET_CASE_RESOURCES_URL parameters:caseInfo
+                  success:^(AFHTTPRequestOperation* operation, id responseObject) {
+                      NSLog(@"SERVER Success: got resources for current case");
+                  }
+                  failure:^(AFHTTPRequestOperation* operation, NSError* error) {
+                      NSLog(@"SERVER Failed to get resources for current case; Error: %@", error);
+                  }];
          }
          failure:^(AFHTTPRequestOperation* operation, NSError* error) {
              NSLog(@"SERVER Failed to get current Student Records; Error: %@", error);
-         }];
-    
-    // Request resources (Words, Components, and Sentences) for current case
-    NSDictionary *caseInfo = @{@"caseInfo":@{@"book_id":@1,
-                                             @"unit_number":@1,
-                                             @"case_number":@1}
-                               };
-    [manager GET:@GET_CASE_RESOURCES_URL parameters:caseInfo
-         success:^(AFHTTPRequestOperation* operation, id responseObject) {
-             NSLog(@"SERVER Success: got resources for current case");
-         }
-         failure:^(AFHTTPRequestOperation* operation, NSError* error) {
-             NSLog(@"SERVER Failed to get resources for current case; Error: %@", error);
          }];
     
     // Request updated StudentLearnedWords and StudentLearnedComponents
