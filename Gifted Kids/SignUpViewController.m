@@ -159,6 +159,8 @@
             // Save student email and student id to UserDefaults
             NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
             [userDefaults setObject:studentObject[@"email"] forKey:@"StudentEmail"];
+            [userDefaults setObject:studentInfo[2] forKey:@"StudentPassword"];
+            [userDefaults setObject:[NSNumber numberWithBool:YES] forKey:@"ServerLoggedIn"];
             [userDefaults synchronize];
             NSLog(@"Local: Logged In");
             

@@ -23,19 +23,19 @@
 
 // Get current Student Records
 
-#define GET_STUDENT_RECORDS_URL ""   // !!!
+#define GET_STUDENT_RECORDS_URL "http://localhost:3000/student_current_records"
 
 
 // Get updated StudentLearnedWords and StudentLearnedComponents
 
-#define GET_STUDENT_LEARNED_WORDS_URL ""
+#define GET_STUDENT_LEARNED_WORDS_URL "http://localhost:3000/student_learnt_words"
 
-#define GET_STUDENT_LEARNED_COMPONENTS_URL ""
+#define GET_STUDENT_LEARNED_COMPONENTS_URL "http://localhost:3000/student_learnt_components"
 
 
 // Get resources (Words, Components, Sentences) for Case
 
-#define GET_CASE_RESOURCES_URL ""
+#define GET_CASE_RESOURCES_URL "http://localhost:3000/cases"
 
 
 @end

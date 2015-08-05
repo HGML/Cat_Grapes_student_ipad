@@ -86,6 +86,12 @@
 //        else {
 //            NSLog(@"Removed database from %@", storeURL);
 //        }
+//        
+//        NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
+//        [userDefaults removeObjectForKey:@"StudentEmail"];
+//        [userDefaults removeObjectForKey:@"StudentPassword"];
+//        [userDefaults removeObjectForKey:@"ServerLoggedIn"];
+//        [userDefaults synchronize];
 //    }
     // ***
     if (![fileManager fileExistsAtPath:[storeURL path]]) {
@@ -174,6 +180,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:NO] forKey:@"ServerLoggedIn"];   // TEST PURPOSES ONLY!
     return YES;
 }
 
@@ -204,6 +211,7 @@
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:NO] forKey:@"ServerLoggedIn"];
     [self saveContext];
 }
 

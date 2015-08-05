@@ -123,8 +123,51 @@
 - (void)getUser
 {
     NSString* email = [[NSUserDefaults standardUserDefaults] objectForKey:@"StudentEmail"];
+    NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
+    NSNumber* serverLoggedIn = [userDefaults objectForKey:@"ServerLoggedIn"];
+    
     if (! email) {
         [self performSegueWithIdentifier:@"Sign Up Log In" sender:self];
+    }
+    else if (! serverLoggedIn.boolValue) {
+        // Package all the paras in a student field
+        NSDictionary *parameters = @{@"student":@{@"email":[userDefaults objectForKey:@"StudentEmail"],
+                                                  @"password":[userDefaults objectForKey:@"StudentPassword"]}
+                                     };
+        
+        // Send a POST request to back-end server to log in student user
+        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+        [manager GET:@LOGIN_URL parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            NSLog(@"Server response object: %@", responseObject);
+            
+            if([responseObject[@"status"]  isEqual: (@"Login Failure")])
+            {
+                NSLog(@"Server: No student account exists with email %@ and password %@.",
+                      [userDefaults objectForKey:@"StudentEmail"], [userDefaults objectForKey:@"StudentPassword"]);
+                UIAlertView* noAccountAlert = [[UIAlertView alloc] initWithTitle:@"无法登陆"
+                                                                         message:@"邮箱或密码错误"
+                                                                        delegate:self
+                                                               cancelButtonTitle:@"好"
+                                                               otherButtonTitles:nil];
+                [noAccountAlert show];
+                return;
+            }
+            else if([responseObject[@"status"]  isEqual: (@"Login Success")])
+            {
+                NSLog(@"Server: Logged in successfully!");
+                
+                // Save student email to UserDefaults
+                NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
+                [userDefaults setObject:[NSNumber numberWithBool:YES] forKey:@"ServerLoggedIn"];
+                [userDefaults synchronize];
+                NSLog(@"Local: Logged In");
+                
+                // Request latest data from server
+                [self getLatestDataFromServer];
+            }
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"Error: %@", error);
+        }];
     }
     else {
 //        NSFetchRequest* request = [NSFetchRequest fetchRequestWithEntityName:@"Student"];
@@ -159,14 +202,14 @@
     // Request current Student Records
     [manager GET:@GET_STUDENT_RECORDS_URL parameters:nil
          success:^(AFHTTPRequestOperation* operation, id responseObject) {
-             NSLog(@"SERVER Success: got current Student Records");
+             NSLog(@"SERVER Success: got current Student Records %@", responseObject);
          }
          failure:^(AFHTTPRequestOperation* operation, NSError* error) {
              NSLog(@"SERVER Failed to get current Student Records; Error: %@", error);
          }];
     
     // Request resources (Words, Components, and Sentences) for current case
-    NSDictionary *caseInfo = @{@"caseInfo":@{@"book_id":@0,
+    NSDictionary *caseInfo = @{@"caseInfo":@{@"book_id":@1,
                                              @"unit_number":@1,
                                              @"case_number":@1}
                                };

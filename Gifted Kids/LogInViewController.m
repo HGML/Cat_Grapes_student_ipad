@@ -110,7 +110,7 @@
                                               @"password":studentInfo[1]}
                                  };
     
-    // Send a POST request to back-end server to create the student user.
+    // Send a POST request to back-end server to log in student user
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:@LOGIN_URL parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"Server response object: %@", responseObject);
@@ -133,6 +133,8 @@
             // Save student email to UserDefaults
             NSUserDefaults* userDefaults = [NSUserDefaults standardUserDefaults];
             [userDefaults setObject:studentInfo[0] forKey:@"StudentEmail"];
+            [userDefaults setObject:studentInfo[1] forKey:@"StudentPassword"];
+            [userDefaults setObject:[NSNumber numberWithBool:YES] forKey:@"ServerLoggedIn"];
             [userDefaults synchronize];
             NSLog(@"Local: Logged In");
             
