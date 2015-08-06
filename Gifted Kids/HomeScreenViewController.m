@@ -147,12 +147,8 @@
             {
                 NSLog(@"Server: No student account exists with email %@ and password %@.",
                       [userDefaults objectForKey:@"StudentEmail"], [userDefaults objectForKey:@"StudentPassword"]);
-                UIAlertView* noAccountAlert = [[UIAlertView alloc] initWithTitle:@"无法登陆"
-                                                                         message:@"邮箱或密码错误"
-                                                                        delegate:self
-                                                               cancelButtonTitle:@"好"
-                                                               otherButtonTitles:nil];
-                [noAccountAlert show];
+                
+                [self performSegueWithIdentifier:@"Sign Up Log In" sender:self];
                 return;
             }
             else if([responseObject[@"status"]  isEqual: (@"Login Success")])
@@ -255,33 +251,30 @@
 
 - (void)writeTestRecordsToServer
 {
-    [self addStudentLearnedWordsToServer];
-    [self updateStudentLearnedWordsToServer];
+//    [self addStudentLearnedWordsToServer];
+//    [self updateStudentLearnedWordsToServer];
+    [self addStudentLearnedComponentsToServer];
+//    [self updateStudentLearnedComponentsToServer];
+    
+    // Update LastUpdateDate
+    // SHOULD ONLY UPDATE IF ALL RESQUESTS SUCCEEDED
+    [[NSUserDefaults standardUserDefaults] setObject:[DateManager now] forKey:@"LastUpdateDate"];
 }
 
 - (void)addStudentLearnedWordsToServer
 {
-    // Package all the paras in a learnedWords field
-    NSDictionary* slw1 = @{@"student_id":@1,
-                           @"word_id":@1,
+    // Package all the parameters in a learnedWords field
+    NSDictionary* slw1 = @{@"word_id":@1,
                            @"current_strength":@100,
-                           @"strength_history":@"100",
-                           @"test_interval":@2,
-                           @"next_test_date":[DateManager dateDays:2 afterDate:[DateManager today]]
+                           @"test_interval":@2
                            };
-    NSDictionary* slw2 = @{@"student_id":@1,
-                           @"word_id":@2,
+    NSDictionary* slw2 = @{@"word_id":@2,
                            @"current_strength":@0,
-                           @"strength_history":@"0",
-                           @"test_interval":@1,
-                           @"next_test_date":[DateManager dateDays:1 afterDate:[DateManager today]]
+                           @"test_interval":@1
                            };
-    NSDictionary* slw3 = @{@"student_id":@1,
-                           @"word_id":@10,
+    NSDictionary* slw3 = @{@"word_id":@10,
                            @"current_strength":@0,
-                           @"strength_history":@"0",
-                           @"test_interval":@1,
-                           @"next_test_date":[DateManager dateDays:1 afterDate:[DateManager today]]
+                           @"test_interval":@1
                            };
     NSDictionary *parameters = @{@"learnedWords":@{@1:slw1,
                                                    @2:slw2,
@@ -301,34 +294,95 @@
 
 - (void)updateStudentLearnedWordsToServer
 {
-    // Package all the paras in a learnedWords field
-    NSDictionary* slw1 = @{@"student_id":@1,
-                           @"word_id":@5,
+    // Package all the parameters in a learnedWords field
+    NSDictionary* slw1 = @{@"word_id":@5,
                            @"current_strength":@0,
-                           @"strength_history":@"0",
-                           @"test_interval":@1,
-                           @"next_test_date":[DateManager dateDays:1 afterDate:[DateManager today]]
+                           @"test_interval":@1
                            };
-    NSDictionary* slw2 = @{@"student_id":@1,
-                           @"word_id":@7,
+    NSDictionary* slw2 = @{@"word_id":@7,
                            @"current_strength":@0,
-                           @"strength_history":@"0",
-                           @"test_interval":@1,
-                           @"next_test_date":[DateManager dateDays:1 afterDate:[DateManager today]]
+                           @"test_interval":@1
                            };
-    NSDictionary *parameters = @{@"learnedWords":@{@1:slw1,
-                                                   @2:slw2}
+    NSDictionary* allUpdateParams = @{@3:slw1,
+                                      @5:slw2};
+    
+    // Send a POST request to back-end server to update each StudentLearnedWords
+    for (id learnedWordsID in [allUpdateParams allKeys]) {
+        NSDictionary* slw = [allUpdateParams objectForKey:learnedWordsID];
+        NSDictionary* parameters = @{@"learnedWords":slw};
+        NSString* updateURL = [NSString stringWithFormat:@"%@%@", @UPDATE_LEARNED_WORDS_URL, learnedWordsID];
+        
+        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+        [manager PATCH:updateURL
+            parameters:parameters
+               success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                   NSLog(@"SERVER Success: updated learnedWords");
+               } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                   NSLog(@"SERVER Failed to update learnedWords: %@", error);
+               }];
+    }
+}
+
+- (void)addStudentLearnedComponentsToServer
+{
+    // Package all the parameters in a learnedWords field
+    NSDictionary* slc1 = @{@"component_id":@1,
+                           @"current_strength":@100,
+                           @"test_interval":@2
+                           };
+    NSDictionary* slc2 = @{@"component_id":@2,
+                           @"current_strength":@0,
+                           @"test_interval":@1
+                           };
+    NSDictionary* slc3 = @{@"component_id":@3,
+                           @"current_strength":@100,
+                           @"test_interval":@2
+                           };
+    NSDictionary *parameters = @{@"learnedComponents":@{@1:slc1,
+                                                        @2:slc2,
+                                                        @3:slc3}
                                  };
     
-    // Send a POST request to back-end server to update StudentLearnedWords
+    // Send a POST request to back-end server to add new StudentLearnedComponents
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager POST:@UPDATE_LEARNED_WORDS_URL
+    [manager POST:@ADD_LEARNED_COMPONENTS_URL
        parameters:parameters
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
-              NSLog(@"SERVER Success: updated learnedWords");
+              NSLog(@"SERVER Success: added new learnedComponents");
           } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-              NSLog(@"SERVER Failed to update learnedWords: %@", error);
+              NSLog(@"SERVER Failed to add new learnedComponents: %@", error);
           }];
+}
+
+- (void)updateStudentLearnedComponentsToServer
+{
+    // Package all the parameters in a learnedComponents field
+    NSDictionary* slc1 = @{@"component_id":@1,
+                           @"current_strength":@100,
+                           @"test_interval":@2
+                           };
+    NSDictionary* slc2 = @{@"component_id":@2,
+                           @"current_strength":@0,
+                           @"test_interval":@1
+                           };
+    NSDictionary* allUpdateParams = @{@1:slc1,
+                                      @2:slc2};
+    
+    // Send a POST request to back-end server to update each StudentLearnedComponents
+    for (id learnedComponentsID in [allUpdateParams allKeys]) {
+        NSDictionary* slc = [allUpdateParams objectForKey:learnedComponentsID];
+        NSDictionary* parameters = @{@"learnedComponents":slc};
+        NSString* updateURL = [NSString stringWithFormat:@"%@%@", @UPDATE_LEARNED_COMPONENTS_URL, learnedComponentsID];
+        
+        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+        [manager PATCH:updateURL
+            parameters:parameters
+               success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                   NSLog(@"SERVER Success: updated learnedComponents");
+               } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                   NSLog(@"SERVER Failed to update learnedComponents: %@", error);
+               }];
+    }
 }
 
 //- (void)getUnits

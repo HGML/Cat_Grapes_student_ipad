@@ -40,13 +40,13 @@
 
 // Send updated StudentLearnedWords and StudentLearnedComponents
 
-#define ADD_LEARNED_WORDS_URL ""
+#define ADD_LEARNED_WORDS_URL "http://localhost:3000/student_learnt_words"
 
-#define UPDATE_LEARNED_WORDS_URL ""
+#define UPDATE_LEARNED_WORDS_URL "http://localhost:3000/student_learnt_words/"   // append learnedWords.id
 
-#define ADD_LEARNED_COMPONENTS_URL ""
+#define ADD_LEARNED_COMPONENTS_URL "http://localhost:3000/student_learnt_components"
 
-#define UPDATE_LEARNED_COMPONENTS_URL ""
+#define UPDATE_LEARNED_COMPONENTS_URL "http://localhost:3000/student_learnt_components/"   // append learnedComponents.id
 
 
 @end
